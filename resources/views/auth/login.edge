@@ -2,27 +2,215 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Connexion — NEXUS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — NEXUS CRM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="/css/app.css">
   <script src="/js/theme.js"></script>
 </head>
-<body class="login-page">
-  <div class="login-box">
-    <div class="logo">
-      <img src="/images/logo.png" alt="NEXUS">
+<body>
+  <div class="login-wrapper">
+    <!-- Côté Gauche : Branding & Présentation Visuelle -->
+    <div class="login-hero">
+      <div class="login-hero-header">
+        <img src="/images/logo.png" alt="NEXUS CRM">
+        <span class="brand-name">NEXUS</span>
+      </div>
+
+      <div class="login-hero-content">
+        <div class="login-hero-tag">
+          <i class="ti ti-sparkles"></i> ESPACE CRM MODERNE
+        </div>
+        <h1 class="login-hero-title">
+          Pilotez vos ventes et développez votre clientèle.
+        </h1>
+        <p class="login-hero-desc">
+          NEXUS CRM centralise la gestion de vos prospects, commandes, équipes et catalogues de produits dans une interface rapide, fluide et sécurisée.
+        </p>
+
+        <div class="login-features-list">
+          <div class="login-feature-card">
+            <div class="login-feature-icon">
+              <i class="ti ti-chart-dots"></i>
+            </div>
+            <div class="login-feature-text">
+              <b>Pilotage en temps réel</b>
+              <span>Suivez l'activité des commandes, du chiffre d'affaires et de vos équipes.</span>
+            </div>
+          </div>
+
+          <div class="login-feature-card">
+            <div class="login-feature-icon">
+              <i class="ti ti-users"></i>
+            </div>
+            <div class="login-feature-text">
+              <b>Portefeuille d'entreprises centralisé</b>
+              <span>Gérez vos prospects qualifiés et convertissez-les en clients fidèles.</span>
+            </div>
+          </div>
+
+          <div class="login-feature-card">
+            <div class="login-feature-icon">
+              <i class="ti ti-shield-check"></i>
+            </div>
+            <div class="login-feature-text">
+              <b>Espaces dédiés et sécurisés</b>
+              <span>Tableaux de bord sur-mesure pour administrateurs et commerciaux.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-hero-footer">
+        <div class="login-hero-status">
+          <span class="status-dot"></span>
+          <span>Tous les services sont opérationnels</span>
+        </div>
+        <div>© 2026 NEXUS. Tous droits réservés.</div>
+      </div>
     </div>
-    @if(flashMessages.get('error'))
-      <p class="error">{{ flashMessages.get('error') }}</p>
-    @end
-    <form action="/login" method="POST">
-      {{ csrfField() }}
-      <input type="email" name="email" placeholder="Email" required>
-      <input type="password" name="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
-    </form>
+
+    <!-- Côté Droit : Formulaire d'authentification -->
+    <div class="login-form-side">
+      <div class="login-top-actions">
+        <div class="mode-toggle" title="Basculer le mode clair / sombre">
+          <button type="button" class="active" onclick="window.toggleTheme('light')"><i class="ti ti-sun"></i> Mode clair</button>
+          <button type="button" onclick="window.toggleTheme('dark')"><i class="ti ti-moon"></i> Mode sombre</button>
+        </div>
+      </div>
+
+      <div class="login-form-container">
+        <div class="login-mobile-logo">
+          <img src="/images/logo.png" alt="NEXUS">
+          <span>NEXUS CRM</span>
+        </div>
+
+        <div class="login-header-group">
+          <h2 class="login-title">Bienvenue sur NEXUS</h2>
+          <p class="login-subtitle">Connectez-vous avec vos identifiants professionnels.</p>
+        </div>
+
+        @if(flashMessages.get('error'))
+          <div class="alert-error">
+            <i class="ti ti-alert-circle" style="font-size:18px"></i>
+            <span>{{ flashMessages.get('error') }}</span>
+          </div>
+        @end
+
+        <form action="/login" method="POST" id="loginForm">
+          {{ csrfField() }}
+
+          <div class="login-field-group">
+            <label class="login-field-label" for="loginEmail">Email professionnel</label>
+            <div class="login-input-wrapper">
+              <i class="ti ti-mail login-input-icon"></i>
+              <input 
+                type="email" 
+                id="loginEmail" 
+                name="email" 
+                placeholder="nom.prenom@nexus.dz" 
+                required 
+                autocomplete="email"
+                autofocus
+              >
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-field-label" for="loginPassword">Mot de passe</label>
+            <div class="login-input-wrapper">
+              <i class="ti ti-lock login-input-icon"></i>
+              <input 
+                type="password" 
+                id="loginPassword" 
+                name="password" 
+                placeholder="Votre mot de passe" 
+                required 
+                autocomplete="current-password"
+              >
+              <button type="button" class="login-password-toggle" id="togglePasswordBtn" title="Afficher / Masquer le mot de passe">
+                <i class="ti ti-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-row-options">
+            <label class="login-remember">
+              <input type="checkbox" name="remember" checked>
+              <span>Se souvenir de moi</span>
+            </label>
+            <span class="text-muted" style="font-size:12px"><i class="ti ti-shield"></i> Accès sécurisé</span>
+          </div>
+
+          <button type="submit" class="login-submit-btn" id="submitBtn">
+            <span>Se connecter à mon espace</span>
+            <i class="ti ti-arrow-right"></i>
+          </button>
+        </form>
+
+        <!-- Sélecteur rapide de comptes de démonstration (1-Clic) -->
+        <div class="login-demo-box">
+          <div class="login-demo-box-header">
+            <i class="ti ti-sparkles"></i>
+            <span>Comptes de test (cliquez pour pré-remplir)</span>
+          </div>
+          <div class="login-demo-buttons">
+            <button type="button" class="demo-account-chip" onclick="fillAccount('amina.admin@nexus.dz', 'password123', 'admin')">
+              <div class="chip-role">
+                <span>Administrateur</span>
+                <span class="pill pill-amber" style="font-size:9px;padding:1px 6px">Admin</span>
+              </div>
+              <div class="chip-email">amina.admin@nexus.dz</div>
+            </button>
+
+            <button type="button" class="demo-account-chip" onclick="fillAccount('sofia.amrani@nexus.dz', 'password123', 'commercial')">
+              <div class="chip-role">
+                <span>Commercial</span>
+                <span class="pill pill-violet" style="font-size:9px;padding:1px 6px">Ventes</span>
+              </div>
+              <div class="chip-email">sofia.amrani@nexus.dz</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-bottom-notice">
+        NEXUS CRM • Chiffrement sécurisé SSL 256-bit • Système de gestion commerciale
+      </div>
+    </div>
   </div>
+
+  <script>
+    // Toggle Password Visibility
+    const toggleBtn = document.getElementById('togglePasswordBtn');
+    const pwdInput = document.getElementById('loginPassword');
+
+    if (toggleBtn && pwdInput) {
+      toggleBtn.addEventListener('click', function () {
+        const isPwd = pwdInput.type === 'password';
+        pwdInput.type = isPwd ? 'text' : 'password';
+        this.innerHTML = isPwd ? '<i class="ti ti-eye-off"></i>' : '<i class="ti ti-eye"></i>';
+      });
+    }
+
+    // Auto-fill demo account credentials
+    function fillAccount(email, password, role) {
+      const emailField = document.getElementById('loginEmail');
+      const pwdField = document.getElementById('loginPassword');
+      if (emailField && pwdField) {
+        emailField.value = email;
+        pwdField.value = password;
+        
+        // Visual feedback animation on button
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+          submitBtn.style.transform = 'scale(1.02)';
+          setTimeout(() => { submitBtn.style.transform = ''; }, 200);
+        }
+      }
+    }
+  </script>
 </body>
 </html>
