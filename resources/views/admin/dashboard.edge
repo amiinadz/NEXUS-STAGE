@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 <body>
@@ -14,8 +15,12 @@
   <div class="layout">
     @!include('partials/sidebar')
     <main class="content">
-      <h1>Bonjour, {{ auth.user.fullName.split(' ')[0] }}</h1>
-      <p class="subtitle">Voici un aperçu de la gestion des utilisateurs et de l'organisation.</p>
+      <div class="page-header">
+        <div>
+          <h1>Bonjour, {{ auth.user.fullName.split(' ')[0] }}</h1>
+          <p class="subtitle">Voici un aperçu de la gestion des utilisateurs, des ventes et de l'organisation.</p>
+        </div>
+      </div>
 
       <div class="stats-grid stats-grid-4">
         <div class="stat-card">
@@ -31,7 +36,7 @@
           <div class="value">{{ stats.parRole }}</div>
         </div>
         <div class="stat-card">
-          <span class="pill pill-red">COMPTES INACTIFS</span>
+          <span class="pill {{ stats.comptesInactifs > 0 ? 'pill-red' : 'pill-gray' }}">COMPTES INACTIFS</span>
           <div class="value">{{ stats.comptesInactifs }}</div>
         </div>
         <div class="stat-card">
@@ -50,22 +55,32 @@
           <canvas id="rolesDonut" height="180"></canvas>
           <div style="margin-top:16px">
             @each(r in repartitionRoles)
-              <div class="legend-item"><span class="legend-dot" style="background:{{ r.color }}"></span><b>{{ r.label }}</b><span class="val">&nbsp;{{ r.count }} ({{ r.value }}%)</span></div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:{{ r.color }}"></span>
+                <b>{{ r.label }}</b>
+                <span class="val">{{ r.count }} ({{ r.value }}%)</span>
+              </div>
             @end
           </div>
         </div>
 
         <div class="panel">
           <div class="panel-header"><h3>Évolution des commandes réussies</h3></div>
-          <canvas id="commandesLine" height="150"></canvas>
+          <canvas id="commandesLine" height="180"></canvas>
         </div>
 
         <div class="panel">
-          <div class="panel-header"><h3>Dernière activité</h3><a href="/admin/utilisateurs">Voir tout</a></div>
+          <div class="panel-header">
+            <h3>Dernière activité</h3>
+            <a href="/admin/utilisateurs">Voir tout</a>
+          </div>
           @each(u in derniersUsers)
             <div class="activity-item">
               <div class="icon" style="background:var(--violet-light);color:var(--violet)">●</div>
-              <div class="text"><b>{{ u.fullName }}</b><br>{{ u.role }} — {{ u.statutCompte }}</div>
+              <div class="text">
+                <b>{{ u.fullName }}</b><br>
+                {{ u.role === 'admin' ? 'Administrateur' : 'Commercial' }} — <span class="pill {{ u.statutCompte === 'actif' ? 'pill-teal' : 'pill-red' }}" style="font-size:9px;padding:1px 6px">{{ u.statutCompte }}</span>
+              </div>
               <div class="time">{{ u.updatedAt.toRelative() }}</div>
             </div>
           @end
@@ -75,36 +90,51 @@
       <div class="panels-row cols-2">
         <div class="panel">
           <div class="panel-header"><h3>Meilleurs commerciaux</h3></div>
-          <table class="contacts-table">
-            <thead><tr><th>Commercial</th><th>Commandes réussies</th></tr></thead>
+          <table class="contacts-table" style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th>Commercial</th>
+                <th>Commandes réussies</th>
+              </tr>
+            </thead>
             <tbody>
-
               @each((c, index) in meilleursCommerciaux) 
                  <tr>
-                    <td><span class="rank-badge">{{ index + 1 }}</span> {{ c.nom }}</td>
-                    <td>{{ c.nbCommandes }}</td>
+                    <td>
+                      <span class="rank-badge">{{ index + 1 }}</span>
+                      <b>{{ c.nom }}</b>
+                    </td>
+                    <td>
+                      <span class="pill pill-teal">{{ c.nbCommandes }} commande(s)</span>
+                    </td>
                  </tr>
               @end
               
               @if(meilleursCommerciaux.length === 0)
-                <tr><td colspan="2" class="text-muted">Pas encore de données.</td></tr>
+                <tr><td colspan="2" class="text-muted" style="text-align:center;padding:24px">Pas encore de données.</td></tr>
               @end
             </tbody>
           </table>
         </div>
+
         <div class="panel">
           <div class="panel-header"><h3>Produits les plus vendus</h3></div>
-          <table class="contacts-table">
-            <thead><tr><th>Produit</th><th>Quantité vendue</th></tr></thead>
+          <table class="contacts-table" style="table-layout: auto;">
+            <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Quantité vendue</th>
+              </tr>
+            </thead>
             <tbody>
               @each(p in produitsVendus)
                 <tr>
-                  <td>{{ p.nom }}</td>
-                  <td>{{ p.qteTotale }}</td>
+                  <td><b>{{ p.nom }}</b></td>
+                  <td><span class="pill pill-violet">{{ p.qteTotale }} unité(s)</span></td>
                 </tr>
               @end
               @if(produitsVendus.length === 0)
-                <tr><td colspan="2" class="text-muted">Pas encore de données.</td></tr>
+                <tr><td colspan="2" class="text-muted" style="text-align:center;padding:24px">Pas encore de données.</td></tr>
               @end
             </tbody>
           </table>
@@ -114,22 +144,76 @@
   </div>
 
   <script>
-    new Chart(document.getElementById('rolesDonut'), {
+    function getChartThemeColors() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {
+        isDark,
+        gridColor: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)',
+        textColor: isDark ? '#94a3b8' : '#7c7a94',
+        borderColor: isDark ? '#f0714d' : '#e8643f',
+        bgColor: isDark ? 'rgba(240, 113, 77, 0.15)' : 'rgba(232, 100, 63, 0.1)'
+      };
+    }
+
+    const themeColors = getChartThemeColors();
+
+    const donutChart = new Chart(document.getElementById('rolesDonut'), {
       type: 'doughnut',
       data: {
         labels: {{{ JSON.stringify(repartitionRoles.map(r => r.label)) }}},
-        datasets: [{ data: {{{ JSON.stringify(repartitionRoles.map(r => r.value)) }}}, backgroundColor: {{{ JSON.stringify(repartitionRoles.map(r => r.color)) }}}, borderWidth: 0 }]
+        datasets: [{
+          data: {{{ JSON.stringify(repartitionRoles.map(r => r.value)) }}},
+          backgroundColor: {{{ JSON.stringify(repartitionRoles.map(r => r.color)) }}},
+          borderWidth: 0
+        }]
       },
-      options: { cutout: '70%', plugins: { legend: { display: false } } }
+      options: {
+        cutout: '72%',
+        plugins: { legend: { display: false } }
+      }
     });
 
-    new Chart(document.getElementById('commandesLine'), {
+    const lineChart = new Chart(document.getElementById('commandesLine'), {
       type: 'line',
       data: {
         labels: {{{ JSON.stringify(semaines.map(s => s.label)) }}},
-        datasets: [{ data: {{{ JSON.stringify(semaines.map(s => s.count)) }}}, borderColor: '#e8643f', backgroundColor: 'rgba(232,100,63,0.1)', fill: true, tension: 0.4 }]
+        datasets: [{
+          data: {{{ JSON.stringify(semaines.map(s => s.count)) }}},
+          borderColor: themeColors.borderColor,
+          backgroundColor: themeColors.bgColor,
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2,
+          pointBackgroundColor: themeColors.borderColor
+        }]
       },
-      options: { plugins: { legend: { display: false } } }
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { color: themeColors.gridColor },
+            ticks: { color: themeColors.textColor, font: { family: 'Inter', size: 11 } }
+          },
+          y: {
+            grid: { color: themeColors.gridColor },
+            ticks: { color: themeColors.textColor, font: { family: 'Inter', size: 11 }, precision: 0 },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    window.addEventListener('nexus-theme-change', function() {
+      const tc = getChartThemeColors();
+      lineChart.data.datasets[0].borderColor = tc.borderColor;
+      lineChart.data.datasets[0].backgroundColor = tc.bgColor;
+      lineChart.data.datasets[0].pointBackgroundColor = tc.borderColor;
+      lineChart.options.scales.x.grid.color = tc.gridColor;
+      lineChart.options.scales.x.ticks.color = tc.textColor;
+      lineChart.options.scales.y.grid.color = tc.gridColor;
+      lineChart.options.scales.y.ticks.color = tc.textColor;
+      lineChart.update();
     });
   </script>
 </body>

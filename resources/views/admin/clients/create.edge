@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM - Nouveau client</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1><i class="ti ti-plus"></i> Nouveau client / prospect</h1>
+          <p class="subtitle">Ajoutez une nouvelle entreprise au portefeuille.</p>
+        </div>
+      </div>
+
+      <div class="panel" style="max-width:600px">
+        <form method="POST" action="/admin/clients">
+          {{ csrfField() }}
+
+          <label>Nom de l'entreprise *</label>
+          <input type="text" name="nom" required placeholder="Ex: TechAlgeria SPA">
+
+          <label>Secteur d'activité</label>
+          <input type="text" name="secteurActivite" placeholder="Ex: Informatique, Santé, Agroalimentaire...">
+
+          <label>Statut initial</label>
+          <select name="statut">
+            <option value="client">Client (a déjà passé des commandes)</option>
+            <option value="prospect">Prospect (en cours de négociation)</option>
+          </select>
+
+          <label>Commercial assigné</label>
+          <select name="commercialId">
+            <option value="">-- Aucun (Non assigné) --</option>
+            @each(c in commerciaux)
+              <option value="{{ c.id }}">{{ c.fullName }}</option>
+            @end
+          </select>
+
+          <label>Email de contact</label>
+          <input type="email" name="email" placeholder="Ex: contact@entreprise.dz">
+
+          <label>Téléphone</label>
+          <input type="text" name="telephone" placeholder="Ex: 0550111111">
+
+          <label>Adresse / Ville</label>
+          <input type="text" name="adresse" placeholder="Ex: Alger, Oran...">
+
+          <div style="margin-top:24px;display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn-primary">Créer l'entreprise</button>
+            <a href="/admin/clients" class="btn-secondary">Annuler</a>
+          </div>
+        </form>
+      </div>
+
+      <a href="/admin/clients" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

@@ -2,24 +2,159 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>NEXUS CRM</title>
+  <title>NEXUS CRM - Nos clients</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
 </head>
 <body>
   @!include('partials/topbar')
   <div class="layout">
     @!include('partials/sidebar')
     <main class="content">
-      <div style="display:flex;justify-content:space-between;align-items:center">
+      <div class="page-header">
         <div>
-          <h1><i class="ti ti-users"></i>Nos clients</h1>
-          <p class="subtitle">Consultez et gérez tous vos clients.</p>
+          <h1><i class="ti ti-users"></i> Nos clients</h1>
+          <p class="subtitle">Consultez, filtrez et gérez le portefeuille clients et prospects de l'entreprise.</p>
         </div>
-      </div>  
+        <a href="/admin/clients/creer" class="btn-primary"><i class="ti ti-plus"></i> Nouveau client</a>
+      </div>
 
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+      @if(flashMessages.get('error'))
+        <div class="alert-error">{{ flashMessages.get('error') }}</div>
+      @end
+
+      <div class="stats-grid stats-grid-4">
+        <div class="stat-card">
+          <span class="pill pill-teal">CLIENTS</span>
+          <div class="value">{{ stats.totalClients }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-violet">PROSPECTS</span>
+          <div class="value">{{ stats.totalProspects }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-amber">TOTAL ENTREPRISES</span>
+          <div class="value">{{ stats.totalEntreprises }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-blue">COMMERCIAL ASSIGNÉ</span>
+          <div class="value">{{ stats.totalAssignes }}</div>
+        </div>
+      </div>
+
+      <form method="GET" action="/admin/clients" class="filters-row">
+        <div class="search-input">
+          <i class="ti ti-search"></i>
+          <input type="text" name="search" value="{{ filters.search }}" placeholder="Rechercher par nom, email, téléphone, secteur...">
+        </div>
+
+        <select name="statut" onchange="this.form.submit()">
+          <option value="all" {{ filters.statut === 'all' ? 'selected' : '' }}>Tous les statuts</option>
+          <option value="client" {{ filters.statut === 'client' ? 'selected' : '' }}>Clients uniquement</option>
+          <option value="prospect" {{ filters.statut === 'prospect' ? 'selected' : '' }}>Prospects uniquement</option>
+        </select>
+
+        <select name="commercialId" onchange="this.form.submit()">
+          <option value="all" {{ filters.commercialId === 'all' ? 'selected' : '' }}>Tous les commerciaux</option>
+          <option value="unassigned" {{ filters.commercialId === 'unassigned' ? 'selected' : '' }}>Non assignés</option>
+          @each(c in commerciaux)
+            <option value="{{ c.id }}" {{ String(filters.commercialId) === String(c.id) ? 'selected' : '' }}>{{ c.fullName }}</option>
+          @end
+        </select>
+
+        <button type="submit" class="btn-secondary"><i class="ti ti-filter"></i> Filtrer</button>
+        @if(filters.search || filters.statut !== 'all' || filters.commercialId !== 'all')
+          <a href="/admin/clients" class="btn-outline">Réinitialiser</a>
+        @end
+      </form>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Liste des entreprises ({{ clients.length }})</h3>
+        </div>
+        <table class="contacts-table" style="table-layout: auto;">
+          <thead>
+            <tr>
+              <th>Entreprise</th>
+              <th>Coordonnées</th>
+              <th>Statut</th>
+              <th>Commercial assigné</th>
+              <th>Commandes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(c in clients)
+              <tr>
+                <td>
+                  <b>{{ c.nom }}</b><br>
+                  <span class="text-muted">{{ c.secteurActivite ?? 'Secteur non précisé' }}</span>
+                </td>
+                <td>
+                  @if(c.email)
+                    <div><i class="ti ti-mail"></i> {{ c.email }}</div>
+                  @end
+                  @if(c.telephone)
+                    <div><i class="ti ti-phone"></i> {{ c.telephone }}</div>
+                  @end
+                  @if(c.adresse)
+                    <div class="text-muted"><i class="ti ti-map-pin"></i> {{ c.adresse }}</div>
+                  @end
+                </td>
+                <td>
+                  <span class="pill {{ c.statut === 'client' ? 'pill-teal' : 'pill-violet' }}">
+                    {{ c.statut === 'client' ? 'CLIENT' : 'PROSPECT' }}
+                  </span>
+                </td>
+                <td>
+                  @if(c.commercial)
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div class="avatar-initials" style="width:28px;height:28px;font-size:11px">
+                        {{ c.commercial.fullName.split(' ').map(n => n[0]).join('').toUpperCase() }}
+                      </div>
+                      <div>
+                        <div>{{ c.commercial.fullName }}</div>
+                        <div class="text-muted" style="font-size:11px">{{ c.commercial.email }}</div>
+                      </div>
+                    </div>
+                  @else
+                    <span class="text-muted"><i class="ti ti-user-x"></i> Non assigné</span>
+                  @end
+                </td>
+                <td>
+                  <span class="pill {{ c.commandes && c.commandes.length > 0 ? 'pill-teal' : 'pill-gray' }}">
+                    <i class="ti ti-shopping-bag"></i> {{ c.commandes ? c.commandes.length : 0 }} commande(s)
+                  </span>
+                </td>
+                <td class="actions">
+                  <a href="/admin/clients/{{ c.id }}" title="Consulter la fiche"><i class="ti ti-eye"></i></a>
+                  <a href="/admin/clients/{{ c.id }}/edit" title="Modifier"><i class="ti ti-pencil"></i></a>
+                  <form action="/admin/clients/{{ c.id }}/delete" method="POST" style="display:inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer {{ c.nom }} ?')">
+                    {{ csrfField() }}
+                    <button type="submit" title="Supprimer"><i class="ti ti-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            @end
+
+            @if(clients.length === 0)
+              <tr>
+                <td colspan="6" style="text-align:center;padding:48px 16px;color:var(--text-muted)">
+                  <i class="ti ti-inbox" style="font-size:36px;display:block;margin-bottom:8px"></i>
+                  <b>Aucune entreprise trouvée</b><br>
+                  Essayez d'ajuster vos critères de recherche ou de filtre.
+                </td>
+              </tr>
+            @end
+          </tbody>
+        </table>
+      </div>
     </main>
   </div>
 </body>

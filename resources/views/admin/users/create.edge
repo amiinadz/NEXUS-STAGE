@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM - Nouvel utilisateur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1><i class="ti ti-user-plus"></i> Nouvel utilisateur</h1>
+          <p class="subtitle">Créer un nouveau compte administrateur ou commercial.</p>
+        </div>
+      </div>
+
+      @if(flashMessages.get('error'))
+        <div class="alert-error">{{ flashMessages.get('error') }}</div>
+      @end
+
+      <div class="panel" style="max-width:560px">
+        <form method="POST" action="/admin/utilisateurs">
+          {{ csrfField() }}
+
+          <label>Nom complet *</label>
+          <input type="text" name="fullName" required placeholder="Ex: Karim Hadj">
+
+          <label>Email professionnel *</label>
+          <input type="email" name="email" required placeholder="Ex: karim.hadj@nexus.dz">
+
+          <label>Mot de passe *</label>
+          <input type="password" name="password" required placeholder="Minimum 6 caractères" value="password123">
+
+          <label>Rôle *</label>
+          <select name="role" required>
+            <option value="commercial" selected>Commercial</option>
+            <option value="admin">Administrateur</option>
+          </select>
+
+          <label>Statut du compte</label>
+          <select name="statutCompte">
+            <option value="actif" selected>Actif (accès autorisé)</option>
+            <option value="inactif">Inactif (accès bloqué)</option>
+          </select>
+
+          <div style="margin-top:24px;display:flex;gap:12px;align-items:center">
+            <button type="submit" class="btn-primary">Créer l'utilisateur</button>
+            <a href="/admin/utilisateurs" class="btn-secondary">Annuler</a>
+          </div>
+        </form>
+      </div>
+
+      <a href="/admin/utilisateurs" class="back-link">← Retour à la liste des utilisateurs</a>
+    </main>
+  </div>
+</body>
+</html>

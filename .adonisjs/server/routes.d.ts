@@ -8,8 +8,22 @@ export type ScannedRoutes = {
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
-    'clients.index': { paramsTuple?: []; params?: {} }
-    'users.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.create': { paramsTuple?: []; params?: {} }
+    'admin.clients.store': { paramsTuple?: []; params?: {} }
+    'admin.clients.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.assign': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
+    'admin.users.create': { paramsTuple?: []; params?: {} }
+    'admin.users.store': { paramsTuple?: []; params?: {} }
+    'admin.users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.toggle_statut': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.index': { paramsTuple?: []; params?: {} }
     'products.create': { paramsTuple?: []; params?: {} }
     'products.store': { paramsTuple?: []; params?: {} }
@@ -41,8 +55,14 @@ export type ScannedRoutes = {
   GET: {
     'auth.show_login': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
-    'clients.index': { paramsTuple?: []; params?: {} }
-    'users.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.create': { paramsTuple?: []; params?: {} }
+    'admin.clients.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
+    'admin.users.create': { paramsTuple?: []; params?: {} }
+    'admin.users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.index': { paramsTuple?: []; params?: {} }
     'products.create': { paramsTuple?: []; params?: {} }
     'products.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -62,8 +82,14 @@ export type ScannedRoutes = {
   HEAD: {
     'auth.show_login': { paramsTuple?: []; params?: {} }
     'admin.dashboard': { paramsTuple?: []; params?: {} }
-    'clients.index': { paramsTuple?: []; params?: {} }
-    'users.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.index': { paramsTuple?: []; params?: {} }
+    'admin.clients.create': { paramsTuple?: []; params?: {} }
+    'admin.clients.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.index': { paramsTuple?: []; params?: {} }
+    'admin.users.create': { paramsTuple?: []; params?: {} }
+    'admin.users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.index': { paramsTuple?: []; params?: {} }
     'products.create': { paramsTuple?: []; params?: {} }
     'products.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
@@ -83,6 +109,14 @@ export type ScannedRoutes = {
   POST: {
     'auth.login': { paramsTuple?: []; params?: {} }
     'auth.logout': { paramsTuple?: []; params?: {} }
+    'admin.clients.store': { paramsTuple?: []; params?: {} }
+    'admin.clients.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.clients.assign': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.store': { paramsTuple?: []; params?: {} }
+    'admin.users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.toggle_statut': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'admin.users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.store': { paramsTuple?: []; params?: {} }
     'products.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }

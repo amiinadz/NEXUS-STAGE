@@ -21,17 +21,33 @@ router.post('/logout', [AuthController, 'logout'])
 router.group(() => {
   router.get('/dashboard', [AdminDashboardController, 'index']).as('admin.dashboard')
   
-  router.get('/clients', [AdminClientsController, 'index'])
+  // Clients
+  router.get('/clients', [AdminClientsController, 'index']).as('admin.clients.index')
+  router.get('/clients/creer', [AdminClientsController, 'create']).as('admin.clients.create')
+  router.post('/clients', [AdminClientsController, 'store']).as('admin.clients.store')
+  router.get('/clients/:id', [AdminClientsController, 'show']).as('admin.clients.show')
+  router.get('/clients/:id/edit', [AdminClientsController, 'edit']).as('admin.clients.edit')
+  router.post('/clients/:id/update', [AdminClientsController, 'update']).as('admin.clients.update')
+  router.post('/clients/:id/delete', [AdminClientsController, 'destroy']).as('admin.clients.destroy')
+  router.post('/clients/:id/assign', [AdminClientsController, 'assign']).as('admin.clients.assign')
 
-  router.get('/utilisateurs', [AdminUsersController, 'index'])
+  // Utilisateurs
+  router.get('/utilisateurs', [AdminUsersController, 'index']).as('admin.users.index')
+  router.get('/utilisateurs/creer', [AdminUsersController, 'create']).as('admin.users.create')
+  router.post('/utilisateurs', [AdminUsersController, 'store']).as('admin.users.store')
+  router.get('/utilisateurs/:id', [AdminUsersController, 'show']).as('admin.users.show')
+  router.get('/utilisateurs/:id/edit', [AdminUsersController, 'edit']).as('admin.users.edit')
+  router.post('/utilisateurs/:id/update', [AdminUsersController, 'update']).as('admin.users.update')
+  router.post('/utilisateurs/:id/toggle-statut', [AdminUsersController, 'toggleStatut']).as('admin.users.toggle_statut')
+  router.post('/utilisateurs/:id/delete', [AdminUsersController, 'destroy']).as('admin.users.destroy')
 
+  // Produits
   router.get('/produits', [AdminProductsController, 'index'])
   router.get('/produits/creer', [AdminProductsController, 'create'])
   router.post('/produits', [AdminProductsController, 'store'])
   router.get('/produits/:id/edit', [AdminProductsController, 'edit'])
   router.post('/produits/:id/update', [AdminProductsController, 'update'])
   router.post('/produits/:id/delete', [AdminProductsController, 'destroy'])
-
 
   router.get('/parametres', [AdminSettingsController, 'index']).as('admin.settings')
   router.post('/parametres', [AdminSettingsController, 'update']).as('admin.settings.update')

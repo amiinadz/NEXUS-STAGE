@@ -24,12 +24,14 @@ const dbConfig = defineConfig({
         user: env.get('DB_USER'),
         password: env.get('DB_PASSWORD'),
         database: env.get('DB_DATABASE'),
+        ssl: false, // Set to false because Render does not support SSL for PostgreSQL
       },
       migrations: {
         naturalSort: true,
         paths: ['database/migrations'],
       },
       debug: app.inDev,
+
     },
   },
 })

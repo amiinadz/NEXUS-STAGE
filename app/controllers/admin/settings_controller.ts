@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import hash from '@adonisjs/core/services/hash'
 
 export default class SettingsController {
   async index({ view, auth }: HttpContext) {
@@ -12,7 +13,7 @@ export default class SettingsController {
     user.fullName = data.fullName
     user.email = data.email
     if (data.password && data.password.trim() !== '') {
-      user.password = data.password
+      user.password = await hash.make(data.password.trim())
     }
     await user.save()
 

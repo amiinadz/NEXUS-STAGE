@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
 </head>
 <body>
   @!include('partials/topbar')
@@ -15,8 +16,8 @@
     <main class="content">
       <div class="page-header">
         <div>
-          <h1>Gérer nos produits et services</h1>
-          <p class="subtitle">Ajoutez, modifiez et suivez votre catalogue.</p>
+          <h1><i class="ti ti-box"></i> Gérer nos produits et services</h1>
+          <p class="subtitle">Ajoutez, modifiez et suivez votre catalogue d'offres et prestations.</p>
         </div>
         <a href="/admin/produits/creer" class="btn-primary"><i class="ti ti-plus"></i> Nouveau produit</a>
       </div>
@@ -27,11 +28,11 @@
 
       <div class="stats-grid stats-grid-4">
         <div class="stat-card">
-          <span class="pill pill-violet">TOTAL</span>
+          <span class="pill pill-violet">TOTAL OFFRES</span>
           <div class="value">{{ stats.total }}</div>
         </div>
         <div class="stat-card">
-          <span class="pill pill-teal">ACTIFS</span>
+          <span class="pill pill-teal">CATALOGUE ACTIF</span>
           <div class="value">{{ stats.actifs }}</div>
         </div>
         <div class="stat-card">
@@ -45,8 +46,8 @@
       </div>
 
       <div class="panel">
-        <div class="panel-header"><h3>Liste des produits et services</h3></div>
-        <table class="contacts-table">
+        <div class="panel-header"><h3>Liste des produits et services ({{ produits.length }})</h3></div>
+        <table class="contacts-table" style="table-layout: auto;">
           <thead>
             <tr>
               <th>Nom</th>

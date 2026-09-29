@@ -2,7 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Produit from '#models/produit'
 
 export default class ProductsController {
-  async index({ view, auth }: HttpContext) {
+  async index({ view }: HttpContext) {
     const produits = await Produit.query().orderBy('created_at', 'desc')
 
     const total = produits.length
@@ -20,7 +20,7 @@ export default class ProductsController {
     return view.render('admin/products/create')
   }
 
-  async store({ request, auth, response, session }: HttpContext) {
+  async store({ request, response, session }: HttpContext) {
     const data = request.only(['nom', 'description', 'prix', 'type'])
 
     await Produit.create({

@@ -7,14 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
 </head>
 <body>
   @!include('partials/topbar')
   <div class="layout">
     @!include('partials/sidebar')
     <main class="content">
-      <h1>Paramètres</h1>
-      <p class="subtitle">Gérez votre profil, vos préférences et vos notifications.</p>
+      <div class="page-header">
+        <div>
+          <h1><i class="ti ti-settings"></i> Paramètres</h1>
+          <p class="subtitle">Gérez votre profil, vos préférences et l'apparence de l'application.</p>
+        </div>
+      </div>
 
       @if(flashMessages.get('success'))
         <div class="alert-success">{{ flashMessages.get('success') }}</div>
@@ -43,17 +48,17 @@
             <label>Nouveau mot de passe (laisser vide pour ne pas changer)</label>
             <input type="password" name="password" placeholder="••••••••">
 
-            <button type="submit" class="btn-primary" style="margin-top:16px">Enregistrer</button>
+            <button type="submit" class="btn-primary" style="margin-top:20px">Enregistrer les modifications</button>
           </form>
         </div>
 
         <div class="panel">
-          <h3 style="margin-bottom:20px">Préférences</h3>
+          <h3 style="margin-bottom:20px">Préférences d'affichage</h3>
 
-          <div class="pref-label">Thème</div>
+          <div class="pref-label">Thème de l'interface</div>
           <div class="theme-toggle-group">
-            <button type="button" class="theme-btn active"><i class="ti ti-sun"></i> Mode clair</button>
-            <button type="button" class="theme-btn"><i class="ti ti-moon"></i> Mode sombre</button>
+            <button type="button" class="theme-btn active" onclick="window.toggleTheme('light')"><i class="ti ti-sun"></i> Mode clair</button>
+            <button type="button" class="theme-btn" onclick="window.toggleTheme('dark')"><i class="ti ti-moon"></i> Mode sombre</button>
           </div>
 
           <div class="pref-label" style="margin-top:20px">Langue</div>

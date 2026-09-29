@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM - Fiche Client {{ client.nom }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <a href="/admin/clients" class="back-link" style="display:inline-block;margin-bottom:16px">← Retour à la liste des clients</a>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="contact-header">
+        <div class="contact-header-left">
+          <div class="avatar-initials avatar-lg">
+            {{ client.nom.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() }}
+          </div>
+          <div>
+            <div class="contact-title">
+              {{ client.nom }}
+              <span class="pill {{ client.statut === 'client' ? 'pill-teal' : 'pill-violet' }}">
+                {{ client.statut === 'client' ? 'Client' : 'Prospect' }}
+              </span>
+            </div>
+            <div class="text-muted">{{ client.secteurActivite ?? 'Secteur non renseigné' }}</div>
+          </div>
+        </div>
+
+        <div class="contact-header-actions">
+          @if(client.telephone)
+            <a href="tel:{{ client.telephone }}" class="icon-btn"><i class="ti ti-phone"></i><span>Appeler</span></a>
+          @end
+          @if(client.email)
+            <a href="mailto:{{ client.email }}" class="icon-btn"><i class="ti ti-mail"></i><span>Email</span></a>
+          @end
+          <button type="button" class="icon-btn" onclick="document.getElementById('reassignModal').style.display='flex'">
+            <i class="ti ti-user-share"></i><span>Réassigner</span>
+          </button>
+          <a href="/admin/clients/{{ client.id }}/edit" class="icon-btn"><i class="ti ti-pencil"></i><span>Modifier</span></a>
+        </div>
+      </div>
+
+      <div class="contact-grid">
+        <div class="panel">
+          <div class="panel-header"><h3>Informations générales</h3></div>
+          <div class="info-row"><i class="ti ti-mail"></i><div><span class="info-label">Email</span><br>{{ client.email ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-phone"></i><div><span class="info-label">Téléphone</span><br>{{ client.telephone ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-map-pin"></i><div><span class="info-label">Adresse</span><br>{{ client.adresse ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-building"></i><div><span class="info-label">Secteur</span><br>{{ client.secteurActivite ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-user"></i><div><span class="info-label">Commercial en charge</span><br>{{ client.commercial ? client.commercial.fullName : 'Non assigné' }}</div></div>
+          <div class="info-row"><i class="ti ti-calendar"></i><div><span class="info-label">Créé le</span><br>{{ client.createdAt.toFormat('dd/MM/yyyy HH:mm') }}</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Résumé des commandes</h3></div>
+          <div class="resume-row"><i class="ti ti-shopping-bag"></i> Commandes totales <b>{{ client.commandes.length }}</b></div>
+          <div class="resume-row"><i class="ti ti-clock"></i> En cours <b>{{ client.commandes.filter(c => c.statut === 'en_cours').length }}</b></div>
+          <div class="resume-row"><i class="ti ti-check"></i> Finalisées / Validées <b>{{ client.commandes.filter(c => c.statut === 'validee' || c.statut === 'terminee').length }}</b></div>
+          <div class="resume-row"><i class="ti ti-x"></i> Annulées <b>{{ client.commandes.filter(c => c.statut === 'annulee').length }}</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Historique des commandes de {{ client.nom }}</h3>
+        </div>
+        <table class="contacts-table" style="table-layout: auto;">
+          <thead>
+            <tr>
+              <th>N° commande</th>
+              <th>Commercial</th>
+              <th>Statut</th>
+              <th>Date de commande</th>
+              <th>Date de validation</th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(cmd in client.commandes)
+              <tr>
+                <td><b>CMD-{{ cmd.id }}</b></td>
+                <td>{{ cmd.commercial ? cmd.commercial.fullName : '-' }}</td>
+                <td>
+                  <span class="pill {{ cmd.statut === 'en_cours' ? 'pill-amber' : (cmd.statut === 'annulee' ? 'pill-red' : 'pill-teal') }}">
+                    {{ cmd.statut.replace('_', ' ').toUpperCase() }}
+                  </span>
+                </td>
+                <td>{{ cmd.dateCommande ? cmd.dateCommande.toFormat('dd/MM/yyyy') : '-' }}</td>
+                <td>{{ cmd.dateValidation ? cmd.dateValidation.toFormat('dd/MM/yyyy') : '-' }}</td>
+              </tr>
+            @end
+
+            @if(client.commandes.length === 0)
+              <tr>
+                <td colspan="5" class="text-muted" style="text-align:center;padding:24px">
+                  Aucune commande enregistrée pour cette entreprise.
+                </td>
+              </tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Réassignation Commercial -->
+      <div id="reassignModal" class="modal-overlay">
+        <div class="modal-box">
+          <h3>Réassigner le client</h3>
+          <p class="text-muted" style="margin-bottom:16px">Sélectionnez le commercial responsable du suivi de {{ client.nom }}.</p>
+          <form method="POST" action="/admin/clients/{{ client.id }}/assign">
+            {{ csrfField() }}
+            <label>Commercial</label>
+            <select name="commercialId">
+              <option value="">-- Aucun (Non assigné) --</option>
+              @each(c in commerciaux)
+                <option value="{{ c.id }}" {{ client.commercialId === c.id ? 'selected' : '' }}>{{ c.fullName }}</option>
+              @end
+            </select>
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end">
+              <button type="button" class="btn-secondary" onclick="document.getElementById('reassignModal').style.display='none'">Annuler</button>
+              <button type="submit" class="btn-primary">Enregistrer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
