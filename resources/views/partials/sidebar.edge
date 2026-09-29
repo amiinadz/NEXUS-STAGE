@@ -1,0 +1,26 @@
+<aside class="sidebar">
+  @if(auth.user.role === 'admin')
+    <div class="section-label">ESPACE ADMIN</div>
+    <a href="/admin/dashboard" class="{{ request.url() == '/admin/dashboard' ? 'active' : '' }}"><i class="ti ti-home"></i> Tableau de bord</a>
+    <a href="/admin/clients" class="{{ request.url() == '/admin/clients' ? 'active' : '' }}"><i class="ti ti-users"></i> Nos clients</a>
+    <a href="/admin/utilisateurs" class="{{ request.url() == '/admin/utilisateurs' ? 'active' : '' }}"><i class="ti ti-user"></i> Utilisateurs</a>
+    <a href="/admin/produits" class="{{ request.url() == '/admin/produits' ? 'active' : '' }}"><i class="ti ti-box"></i> Gérer nos produits et services</a>
+
+    <div class="section-label">PARAMÈTRES</div>
+    <a href="/admin/parametres" class="{{ request.url() == '/admin/parametres' ? 'active' : '' }}"><i class="ti ti-settings"></i> Paramètres</a>
+  @else
+    <div class="section-label">ESPACE COMMERCIAL</div>
+    <a href="/commercial/dashboard" class="{{ request.url() == '/commercial/dashboard' ? 'active' : '' }}"><i class="ti ti-home"></i> Tableau de bord</a>
+    <a href="/commercial/contacts" class="{{ request.url() == '/commercial/contacts' ? 'active' : '' }}"><i class="ti ti-user"></i> Mes contacts</a>
+    <a href="/commercial/echanges" class="{{ request.url() == '/commercial/echanges' ? 'active' : '' }}"><i class="ti ti-message-circle"></i> Mes échanges</a>
+    <a href="/commercial/commandes" class="{{ request.url() == '/commercial/commandes' ? 'active' : '' }}"><i class="ti ti-shopping-bag"></i> Mes commandes</a>
+
+    <div class="section-label">PARAMÈTRES</div>
+    <a href="/commercial/parametres" class="{{ request.url() == '/commercial/parametres' ? 'active' : '' }}"><i class="ti ti-settings"></i> Paramètres</a>
+  @end
+
+  <form action="/logout" method="POST" class="logout-form">
+    {{ csrfField() }}
+    <button type="submit" class="logout-btn"><i class="ti ti-logout"></i> Déconnexion</button>
+  </form>
+</aside>

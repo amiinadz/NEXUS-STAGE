@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Créer un échange</h1>
+
+      <div class="panel" style="max-width:560px">
+        <form method="POST" action="/commercial/echanges">
+          {{ csrfField() }}
+
+          <label>Entreprise</label>
+          <select name="entrepriseId" required>
+            <option value="">-- Sélectionner --</option>
+            @each(e in entreprises)
+              <option value="{{ e.id }}">{{ e.nom }}</option>
+            @end
+          </select>
+
+          <label>Type d'échange</label>
+          <select name="typeAction" required>
+            <option value="echange">Échange</option>
+            <option value="validation">Validation</option>
+            <option value="transfert">Transfert</option>
+            <option value="creation_prospect">Création prospect</option>
+          </select>
+
+          <label>Description</label>
+          <textarea name="description" rows="4" placeholder="Décrivez l'objectif ou le contenu de l'échange..."></textarea>
+
+          <label>Date & heure</label>
+          <input type="datetime-local" name="dateAction">
+
+          <button type="submit" class="btn-primary" style="margin-top:20px">Planifier l'échange</button>
+        </form>
+      </div>
+
+      <a href="/commercial/echanges" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

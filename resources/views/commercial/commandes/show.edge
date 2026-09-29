@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="contact-header">
+        <div class="contact-header-left">
+          <div class="avatar-initials avatar-lg"><i class="ti ti-shopping-bag"></i></div>
+          <div>
+            <div class="contact-title">
+              Commande CMD-{{ commande.id }}
+              <span class="pill {{ commande.statut === 'en_cours' ? 'pill-amber' : (commande.statut === 'annulee' ? 'pill-red' : 'pill-teal') }}">
+                {{ commande.statut === 'en_cours' ? 'En attente' : commande.statut.replace('_', ' ') }}
+              </span>
+            </div>
+            <div class="text-muted">{{ commande.entreprise.nom }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Détail de la commande</h3></div>
+        <div class="info-row"><i class="ti ti-calendar"></i><div><span class="info-label">Date de commande</span><br>{{ commande.dateCommande.toFormat('dd/MM/yyyy') }}</div></div>
+        @if(commande.dateValidation)
+          <div class="info-row"><i class="ti ti-check"></i><div><span class="info-label">Date de validation</span><br>{{ commande.dateValidation.toFormat('dd/MM/yyyy') }}</div></div>
+        @end
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Produits commandés</h3></div>
+        <table class="contacts-table">
+          <thead><tr><th>Produit</th><th>Quantité</th></tr></thead>
+          <tbody>
+            @each(cp in commande.produits)
+              <tr><td>{{ cp.produit.nom }}</td><td>{{ cp.quantite }}</td></tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+
+      <a href="/commercial/commandes" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

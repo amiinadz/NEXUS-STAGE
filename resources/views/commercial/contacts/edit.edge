@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Modifier le contact</h1>
+
+      <div class="panel" style="max-width:600px">
+        <form method="POST" action="/commercial/contacts/{{ contact.id }}/update">
+          {{ csrfField() }}
+
+          <label>Nom de l'entreprise</label>
+          <input type="text" name="nom" value="{{ contact.nom }}" required>
+
+          <label>Secteur d'activité</label>
+          <input type="text" name="secteurActivite" value="{{ contact.secteurActivite }}">
+
+          <label>Adresse</label>
+          <input type="text" name="adresse" value="{{ contact.adresse }}">
+
+          <label>Téléphone</label>
+          <input type="text" name="telephone" value="{{ contact.telephone }}">
+
+          <label>Email</label>
+          <input type="email" name="email" value="{{ contact.email }}">
+
+          <label>Statut</label>
+          <select name="statut">
+            <option value="prospect" {{ contact.statut === 'prospect' ? 'selected' : '' }}>Prospect</option>
+            <option value="client" {{ contact.statut === 'client' ? 'selected' : '' }}>Client</option>
+          </select>
+
+          <button type="submit" class="btn-primary" style="margin-top:20px">Enregistrer</button>
+        </form>
+      </div>
+
+      <a href="/commercial/contacts" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+</head>
+<body>
+  <nav>
+    <div>NEXUS</div>
+    <input type="text" placeholder="Rechercher un contact, une entreprise, une conversation...">
+    <div>{{ auth.user.fullName }} — {{ auth.user.role }}</div>
+  </nav>
+
+  <div>
+    <aside>
+      @if(auth.user.role === 'admin')
+        <a href="/admin/dashboard">Tableau de bord</a>
+        <a href="/admin/clients">Nos clients</a>
+        <a href="/admin/utilisateurs">Utilisateurs</a>
+        <a href="/admin/produits">Gérer nos produits & services</a>
+        <a href="/admin/parametres">Paramètres</a>
+      @else
+        <a href="/commercial/dashboard">Tableau de bord</a>
+        <a href="/commercial/contacts">Mes contacts</a>
+        <a href="/commercial/echanges">Mes échanges</a>
+        <a href="/commercial/commandes">Mes commandes</a>
+        <a href="/commercial/parametres">Paramètres</a>
+      @end
+      <form action="/logout" method="POST">
+        {{ csrfField() }}
+        <button type="submit">Déconnexion</button>
+      </form>
+    </aside>
+
+    <main>
+      @!section('content')
+    </main>
+  </div>
+</body>
+</html>
+
+
+
+

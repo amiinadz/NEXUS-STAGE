@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Nouvelle commande</h1>
+
+      <div class="panel" style="max-width:560px">
+        <form method="POST" action="/commercial/commandes">
+          {{ csrfField() }}
+
+          <label>Entreprise</label>
+          <select name="entrepriseId" required>
+            <option value="">-- Sélectionner --</option>
+            @each(e in entreprises)
+              <option value="{{ e.id }}">{{ e.nom }}</option>
+            @end
+          </select>
+
+          <label>Produit / service</label>
+          <select name="produitId">
+            <option value="">-- Sélectionner --</option>
+            @each(p in produits)
+              <option value="{{ p.id }}">{{ p.nom }}</option>
+            @end
+          </select>
+
+          <label>Quantité</label>
+          <input type="number" name="quantite" value="1" min="1">
+
+          <label>Date de la commande</label>
+          <input type="date" name="dateCommande">
+
+          <label>Statut</label>
+          <select name="statut">
+            <option value="en_cours">En attente</option>
+            <option value="validee">Validée</option>
+            <option value="terminee">Terminée</option>
+            <option value="annulee">Annulée</option>
+          </select>
+
+          <button type="submit" class="btn-primary" style="margin-top:20px">Créer la commande</button>
+        </form>
+      </div>
+
+      <a href="/commercial/commandes" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

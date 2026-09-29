@@ -1,0 +1,107 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+    <a style="padding=2px;" href="/commercial/contacts" class="back-link">← Retour à la liste</a>
+
+      <div class="contact-header">
+        <div class="contact-header-left">
+          <div class="avatar-initials avatar-lg">{{ contact.nom.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() }}</div>
+          <div>
+            <div class="contact-title">
+              {{ contact.nom }}
+              <span class="pill {{ contact.statut === 'client' ? 'pill-teal' : 'pill-violet' }}">{{ contact.statut === 'client' ? 'Client' : 'Prospect' }}</span>
+            </div>
+            <div class="text-muted">{{ contact.secteurActivite ?? 'Secteur non renseigné' }}</div>
+          </div>
+        </div>
+        <div class="contact-header-actions">
+          @if(contact.telephone)
+            <a href="tel:{{ contact.telephone }}" class="icon-btn"><i class="ti ti-phone"></i><span>Appeler</span></a>
+          @end
+          @if(contact.email)
+            <a href="mailto:{{ contact.email }}" class="icon-btn"><i class="ti ti-mail"></i><span>Email</span></a>
+          @end
+          <a href="/commercial/contacts/{{ contact.id }}/edit" class="icon-btn"><i class="ti ti-pencil"></i><span>Modifier</span></a>
+        </div>
+        <button class="icon-btn" onclick="document.getElementById('transferModal').style.display='flex'">
+         <i class="ti ti-user-share"></i><span>Transférer</span>
+        </button>
+      </div>
+
+      <div class="tabs">
+        <span class="tab active">Profil</span>
+        <span class="tab">Commandes</span>
+      </div>
+
+      <div class="contact-grid">
+        <div class="panel">
+          <div class="panel-header"><h3>Informations générales</h3></div>
+          <div class="info-row"><i class="ti ti-mail"></i><div><span class="info-label">Email</span><br>{{ contact.email ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-phone"></i><div><span class="info-label">Téléphone</span><br>{{ contact.telephone ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-map-pin"></i><div><span class="info-label">Adresse</span><br>{{ contact.adresse ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-building"></i><div><span class="info-label">Secteur</span><br>{{ contact.secteurActivite ?? '-' }}</div></div>
+          <div class="info-row"><i class="ti ti-calendar"></i><div><span class="info-label">Ajouté le</span><br>{{ contact.createdAt.toFormat('dd/MM/yyyy') }}</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Résumé</h3></div>
+          <div class="resume-row"><i class="ti ti-shopping-bag"></i> Commandes totales <b>{{ contact.commandes.length }}</b></div>
+          <div class="resume-row"><i class="ti ti-clock"></i> En cours <b>{{ contact.commandes.filter(c => c.statut === 'en_cours').length }}</b></div>
+          <div class="resume-row"><i class="ti ti-check"></i> Finalisées <b>{{ contact.commandes.filter(c => c.statut === 'terminee' || c.statut === 'validee').length }}</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Commandes</h3></div>
+        <table class="contacts-table">
+          <thead><tr><th>N° commande</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody>
+            @each(cmd in contact.commandes)
+              <tr>
+                <td>CMD-{{ cmd.id }}</td>
+                <td><span class="pill {{ cmd.statut === 'en_cours' ? 'pill-amber' : (cmd.statut === 'annulee' ? 'pill-red' : 'pill-teal') }}">{{ cmd.statut.replace('_', ' ') }}</span></td>
+                <td>{{ cmd.dateCommande.toFormat('dd/MM/yyyy') }}</td>
+              </tr>
+            @end
+            @if(contact.commandes.length === 0)
+              <tr><td colspan="3" class="text-muted">Aucune commande pour l'instant.</td></tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+      <div id="transferModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Transférer ce contact</h3>
+    <form method="POST" action="/commercial/contacts/{{ contact.id }}/transfer">
+      {{ csrfField() }}
+      <label>Choisir un commercial</label>
+      <select name="nouveauCommercialId" required>
+        <option value="">-- Sélectionner --</option>
+        @each(c in commerciaux)
+          <option value="{{ c.id }}">{{ c.fullName }}</option>
+        @end
+      </select>
+      <label>Motif (facultatif)</label>
+      <input type="text" name="motif" placeholder="Ex: surcharge de travail">
+      <div style="margin-top:16px; display:flex; gap:8px">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('transferModal').style.display='none'">Annuler</button>
+        <button type="submit" class="btn-primary">Confirmer le transfert</button>
+      </div>
+    </form>
+  </div>
+</div>
+    </main>
+  </div>
+</body>
+</html>

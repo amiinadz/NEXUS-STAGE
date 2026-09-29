@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Paramètres</h1>
+      <p class="subtitle">Gérez votre profil, vos préférences et vos notifications.</p>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="settings-grid">
+        <div class="panel">
+          <h3 style="margin-bottom:20px">Profil</h3>
+
+          <div class="settings-profile-header">
+            <div class="avatar-initials avatar-lg">{{ user.fullName.split(' ').map(n => n[0]).join('').toUpperCase() }}</div>
+            <div>
+              <div class="contact-title">{{ user.fullName }}</div>
+              <div class="text-muted">Administrateur</div>
+            </div>
+          </div>
+
+          <form method="POST" action="/admin/parametres">
+            {{ csrfField() }}
+            <label>Nom complet</label>
+            <input type="text" name="fullName" value="{{ user.fullName }}" required>
+
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+
+            <label>Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+            <input type="password" name="password" placeholder="••••••••">
+
+            <button type="submit" class="btn-primary" style="margin-top:16px">Enregistrer</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-bottom:20px">Préférences</h3>
+
+          <div class="pref-label">Thème</div>
+          <div class="theme-toggle-group">
+            <button type="button" class="theme-btn active"><i class="ti ti-sun"></i> Mode clair</button>
+            <button type="button" class="theme-btn"><i class="ti ti-moon"></i> Mode sombre</button>
+          </div>
+
+          <div class="pref-label" style="margin-top:20px">Langue</div>
+          <select disabled>
+            <option>Français</option>
+          </select>
+
+          <hr class="pref-divider">
+
+          <label class="pref-checkbox"><input type="checkbox" checked disabled> Notifications par email</label>
+          <label class="pref-checkbox"><input type="checkbox" checked disabled> Notifications push</label>
+          <label class="pref-checkbox"><input type="checkbox" checked disabled> Rappels d'activité</label>
+          <label class="pref-checkbox"><input type="checkbox" disabled> Rapports hebdomadaires</label>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1>Mes contacts</h1>
+          <p class="subtitle">Tous vos prospects et clients.</p>
+        </div>
+        <a href="/commercial/contacts/creer" class="btn-primary"><i class="ti ti-plus"></i> Nouveau contact</a>
+      </div>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="stats-grid stats-grid-3">
+        <div class="stat-card">
+          <span class="pill pill-violet">PROSPECTS</span>
+          <div class="value">{{ stats.prospects }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-teal">CLIENTS</span>
+          <div class="value">{{ stats.clients }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-orange">TOTAL</span>
+          <div class="value">{{ stats.total }}</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Liste des contacts</h3></div>
+        <table class="contacts-table">
+          <thead>
+            <tr>
+              <th>Entreprise</th>
+              <th>Coordonnées</th>
+              <th>Statut</th>
+              <th>Dernière activité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(c in contacts)
+              <tr>
+                <td><b>{{ c.nom }}</b><br><span class="text-muted">{{ c.secteurActivite ?? '-' }}</span></td>
+                <td>
+                  @if(c.email)
+                    <div><i class="ti ti-mail"></i> {{ c.email }}</div>
+                  @end
+                  @if(c.telephone)
+                    <div><i class="ti ti-phone"></i> {{ c.telephone }}</div>
+                  @end
+                </td>
+                <td>
+                  <span class="pill {{ c.statut === 'client' ? 'pill-teal' : 'pill-violet' }}">{{ c.statut.toUpperCase() }}</span>
+                </td>
+                <td>{{ c.updatedAt.toRelative() }}</td>
+                <td class="actions">
+                  <a href="/commercial/contacts/{{ c.id }}" title="Voir"><i class="ti ti-eye"></i></a>
+                  <a href="/commercial/contacts/{{ c.id }}/edit" title="Modifier"><i class="ti ti-pencil"></i></a>
+                  <form action="/commercial/contacts/{{ c.id }}/delete" method="POST" onsubmit="return confirm('Supprimer ce contact ?')">
+                    {{ csrfField() }}
+                    <button type="submit" title="Supprimer"><i class="ti ti-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

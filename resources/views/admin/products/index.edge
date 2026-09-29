@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1>Gérer nos produits et services</h1>
+          <p class="subtitle">Ajoutez, modifiez et suivez votre catalogue.</p>
+        </div>
+        <a href="/admin/produits/creer" class="btn-primary"><i class="ti ti-plus"></i> Nouveau produit</a>
+      </div>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="stats-grid stats-grid-4">
+        <div class="stat-card">
+          <span class="pill pill-violet">TOTAL</span>
+          <div class="value">{{ stats.total }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-teal">ACTIFS</span>
+          <div class="value">{{ stats.actifs }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-amber">SERVICES</span>
+          <div class="value">{{ stats.services }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-red">PRODUITS</span>
+          <div class="value">{{ stats.produitsPhysiques }}</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Liste des produits et services</h3></div>
+        <table class="contacts-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Prix</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(p in produits)
+              <tr>
+                <td><b>{{ p.nom }}</b><br><span class="text-muted">{{ p.description ?? '-' }}</span></td>
+                <td><span class="pill {{ p.type === 'service' ? 'pill-amber' : 'pill-violet' }}">{{ p.type }}</span></td>
+                <td>{{ p.prix }} €</td>
+                <td><span class="pill {{ p.statut === 'actif' ? 'pill-teal' : 'pill-red' }}">{{ p.statut }}</span></td>
+                <td class="actions">
+                  <a href="/admin/produits/{{ p.id }}/edit" title="Modifier"><i class="ti ti-pencil"></i></a>
+                  <form action="/admin/produits/{{ p.id }}/delete" method="POST" onsubmit="return confirm('Supprimer ce produit ?')">
+                    {{ csrfField() }}
+                    <button type="submit" title="Supprimer"><i class="ti ti-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

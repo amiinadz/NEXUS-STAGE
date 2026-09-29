@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Bonjour, {{ auth.user.fullName.split(' ')[0] }}</h1>
+      <p class="subtitle">Voici ce qui se passe aujourd'hui dans votre univers.</p>
+
+      <div class="stats-grid stats-grid-4">
+        <div class="stat-card">
+          <span class="pill pill-violet">ÉCHANGES À VENIR</span>
+          <div class="value">{{ stats.echangesAVenir }}</div>
+          <span class="text-muted">aujourd'hui</span>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-amber">COMMANDES EN COURS</span>
+          <div class="value">{{ stats.commandesEnCours }}</div>
+          <span class="text-muted">en cours</span>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-teal">TAUX DE CONVERSION</span>
+          <div class="value">{{ stats.tauxConversion }}%</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-red">OBJECTIF MENSUEL</span>
+          <div class="value">{{ stats.objectifMensuel }}%</div>
+        </div>
+      </div>
+
+      <div class="panels-row cols-3">
+        <div class="panel">
+          <div class="panel-header"><h3>Prochains échanges</h3><a href="/commercial/echanges">Voir tout</a></div>
+          @each(e in prochainsEchanges)
+            <div class="event-item">
+              <div class="time">{{ e.dateAction.toFormat('HH:mm') }}</div>
+              <div class="avatar-initials">{{ e.entreprise.nom.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() }}</div>
+              <div class="details"><div class="name">{{ e.entreprise.nom }}</div><div class="type">{{ e.typeAction.replace('_', ' ') }}</div></div>
+              <span class="badge-planned">PLANIFIÉ</span>
+            </div>
+          @end
+          @if(prochainsEchanges.length === 0)
+            <p class="text-muted">Aucun échange à venir.</p>
+          @end
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Clients ayant acheté le plus</h3><a href="/commercial/contacts">Voir tout</a></div>
+          <table class="contacts-table">
+            <thead><tr><th>Client</th><th>Qté</th><th>Commandes</th></tr></thead>
+            <tbody>
+              @each(c in clientsTop)
+                <tr>
+                  <td>{{ c.nom }}</td>
+                  <td>{{ c.qte }}</td>
+                  <td>{{ c.nbCommandes }}</td>
+                </tr>
+              @end
+              @if(clientsTop.length === 0)
+                <tr><td colspan="3" class="text-muted">Pas encore de données.</td></tr>
+              @end
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Dernière activité</h3><a href="#">Voir tout</a></div>
+          @each(a in activites)
+            <div class="activity-item">
+              <div class="icon" style="background:var(--teal-light);color:var(--teal)">●</div>
+              <div class="text"><b>{{ a.typeAction.replace('_', ' ') }}</b><br>{{ a.entreprise.nom }}</div>
+              <div class="time">{{ a.createdAt.toRelative() }}</div>
+            </div>
+          @end
+          @if(activites.length === 0)
+            <p class="text-muted">Aucune activité récente.</p>
+          @end
+        </div>
+      </div>
+      <div class="panels-row cols-2">
+        <div class="panel">
+          <div class="panel-header"><h3>Classement des meilleures commandes</h3></div>
+          <canvas id="classementDonut" height="180"></canvas>
+          <div style="margin-top:16px">
+            @each(c in classement)
+              <div class="legend-item"><span class="legend-dot" style="background:{{ c.color }}"></span><b>{{ c.label }}</b><span class="val">&nbsp;{{ c.pct }}% ({{ c.count }} commandes)</span></div>
+            @end
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Évolution des prospects</h3><span>ce mois-ci</span></div>
+          <canvas id="prospectsLine" height="150"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    new Chart(document.getElementById('classementDonut'), {
+      type: 'doughnut',
+      data: {
+        labels: {{{ JSON.stringify(classement.map(c => c.label)) }}},
+        datasets: [{ data: {{{ JSON.stringify(classement.map(c => c.pct)) }}}, backgroundColor: {{{ JSON.stringify(classement.map(c => c.color)) }}}, borderWidth: 0 }]
+      },
+      options: { cutout: '55%', plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('prospectsLine'), {
+      type: 'line',
+      data: {
+        labels: {{{ JSON.stringify(semaines.map(s => s.label)) }}},
+        datasets: [{ data: {{{ JSON.stringify(semaines.map(s => s.count)) }}}, borderColor: '#e8643f', backgroundColor: 'rgba(232,100,63,0.1)', fill: true, tension: 0.4 }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  </script>
+</body>
+</html>

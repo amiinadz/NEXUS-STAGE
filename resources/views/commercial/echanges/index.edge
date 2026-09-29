@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1>Mes échanges</h1>
+          <p class="subtitle">Consultez et gérez tous vos échanges.</p>
+        </div>
+        <a href="/commercial/echanges/creer" class="btn-primary"><i class="ti ti-plus"></i> Créer un échange</a>
+      </div>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="pill pill-violet">TOTAL</span>
+          <div class="value">{{ stats.total }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-teal">ÉCHANGES</span>
+          <div class="value">{{ stats.echangesSimples }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-amber">VALIDATIONS</span>
+          <div class="value">{{ stats.validations }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-red">TRANSFERTS</span>
+          <div class="value">{{ stats.transferts }}</div>
+        </div>
+      </div>
+<div class="panel">
+  <div class="panel-header">
+    <h3>Planning des échanges — Semaine du {{ lundi.toFormat('dd/MM') }} au {{ dimanche.toFormat('dd/MM/yyyy') }}</h3>
+    <div class="calendar-nav">
+      <a href="?semaine={{ lundi.minus({ days: 7 }).toFormat('yyyy-MM-dd') }}" class="btn-secondary" style="padding:6px 12px"><i class="ti ti-chevron-left"></i></a>
+      <a href="?" class="btn-secondary" style="padding:6px 12px">Aujourd'hui</a>
+      <a href="?semaine={{ lundi.plus({ days: 7 }).toFormat('yyyy-MM-dd') }}" class="btn-secondary" style="padding:6px 12px"><i class="ti ti-chevron-right"></i></a>
+    </div>
+  </div>
+
+  <div class="calendar-wrapper">
+    <div class="calendar-grid">
+      <div class="calendar-corner"></div>
+      @each(jour in jours)
+        <div class="calendar-day-header {{ jour.estAujourdhui ? 'is-today' : '' }}">
+          {{ jour.date.setLocale('fr').toFormat('ccc dd/MM') }}
+          @if(jour.evenements.length > 0)
+            <span class="day-count">{{ jour.evenements.length }}</span>
+          @end
+        </div>
+      @end
+
+      <div class="calendar-time-col" style="height: {{ gridHeight }}px">
+        @each(h in heures)
+          <div class="calendar-hour-label" style="height: {{ hourHeight }}px">{{ h }}:00</div>
+        @end
+      </div>
+
+      @each(jour in jours)
+        <div class="calendar-day-col" style="height: {{ gridHeight }}px; background-size: 100% {{ hourHeight }}px;">
+          @each(evt in jour.evenements)
+            <div class="calendar-event pill-{{ evt.type === 'validation' ? 'amber' : (evt.type === 'transfert' ? 'red' : 'teal') }}"
+                 style="top: {{ evt.topPx }}px;"
+                 title="{{ evt.description ?? '' }}">
+              <div class="event-time">{{ evt.heure }}</div>
+              <div class="event-entreprise">{{ evt.entreprise }}</div>
+            </div>
+          @end
+        </div>
+      @end
+    </div>
+  </div>
+</div>
+
+<div class="panel commandes-section-title">
+  <div class="panel-header"><h3>Liste des échanges</h3></div>
+  <table class="contacts-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Entreprise</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each(e in echanges)
+        <tr>
+          <td>{{ e.dateAction.toFormat('dd/MM/yyyy HH:mm') }}</td>
+          <td><b>{{ e.entreprise.nom }}</b></td>
+          <td><span class="pill pill-teal">{{ e.typeAction.replace('_', ' ') }}</span></td>
+          <td class="text-muted">{{ e.description ?? '-' }}</td>
+        </tr>
+      @end
+      @if(echanges.length === 0)
+        <tr><td colspan="4" class="text-muted">Aucun échange pour l'instant.</td></tr>
+      @end
+    </tbody>
+  </table>
+</div>
+    </main>
+  </div>
+</body>
+</html>

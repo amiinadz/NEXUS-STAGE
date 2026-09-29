@@ -1,0 +1,86 @@
+    
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="page-header">
+        <div>
+          <h1>Mes commandes</h1>
+          <p class="subtitle">Toutes les commandes de vos entreprises.</p>
+        </div>
+        <a href="/commercial/commandes/creer" class="btn-primary"><i class="ti ti-plus"></i> Nouvelle commande</a>
+      </div>
+
+      @if(flashMessages.get('success'))
+        <div class="alert-success">{{ flashMessages.get('success') }}</div>
+      @end
+
+      <div class="stats-grid stats-grid-3">
+        <div class="stat-card">
+          <span class="pill pill-amber">EN COURS</span>
+          <div class="value">{{ stats.enCours }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-teal">VALIDÉES / TERMINÉES</span>
+          <div class="value">{{ stats.validees + stats.terminees }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="pill pill-violet">TOTAL</span>
+          <div class="value">{{ stats.total }}</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><h3>Liste des commandes</h3></div>
+        <table class="contacts-table">
+          <thead>
+            <tr>
+              <th>Entreprise</th>
+              <th>Produit(s)</th>
+              <th>Statut</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(cmd in commandes)
+              <tr>
+                <td><b>{{ cmd.entreprise.nom }}</b></td>
+                <td>
+                  @each(cp in cmd.produits)
+                    <div>{{ cp.produit.nom }} (x{{ cp.quantite }})</div>
+                  @end
+                </td>
+                <td>
+                  <span class="pill {{ cmd.statut === 'en_cours' ? 'pill-amber' : (cmd.statut === 'annulee' ? 'pill-red' : 'pill-teal') }}">
+                    {{ cmd.statut === 'en_cours' ? 'En attente' : cmd.statut.replace('_', ' ') }}
+                  </span>
+                </td>
+                <td>{{ cmd.dateCommande.toFormat('dd/MM/yyyy') }}</td>
+                <td class="actions">
+                  <a href="/commercial/commandes/{{ cmd.id }}" title="Voir"><i class="ti ti-eye"></i></a>
+                  <form action="/commercial/commandes/{{ cmd.id }}/delete" method="POST" onsubmit="return confirm('Supprimer cette commande ?')">
+                    {{ csrfField() }}
+                    <button type="submit" title="Supprimer"><i class="ti ti-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            @end
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

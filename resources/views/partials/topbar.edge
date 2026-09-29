@@ -1,0 +1,24 @@
+<nav class="topbar">
+  <div class="logo">
+    <img src="/images/logo.png" alt="NEXUS">
+  </div>
+
+  <div class="mode-toggle">
+    <button class="active"><i class="ti ti-sun"></i> Mode clair</button>
+    <button><i class="ti ti-moon"></i> Mode sombre</button>
+  </div>
+
+  <div class="search">
+    <i class="ti ti-search"></i>
+    <input type="text" placeholder="Rechercher un contact, une entreprise, une conversation...">
+    <span class="shortcut">⌘ K</span>
+  </div>
+
+  <div class="profile">
+    <div class="avatar-initials">{{ auth.user.fullName.split(' ').map(n => n[0]).join('').toUpperCase() }}</div>
+    <div>
+      <div class="name">{{ auth.user.fullName }}</div>
+      <div class="role">{{ auth.user.role === 'admin' ? 'Administrateur' : 'Commercial' }}</div>
+    </div>
+  </div>
+</nav>

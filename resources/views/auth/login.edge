@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion — NEXUS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="login-page">
+  <div class="login-box">
+    <div class="logo">
+      <img src="/images/logo.png" alt="NEXUS">
+    </div>
+    @if(flashMessages.get('error'))
+      <p class="error">{{ flashMessages.get('error') }}</p>
+    @end
+    <form action="/login" method="POST">
+      {{ csrfField() }}
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+</body>
+</html>

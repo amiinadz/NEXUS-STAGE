@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <div class="contact-header">
+        <div class="contact-header-left">
+          <div class="avatar-initials avatar-lg">{{ user.fullName.split(' ').map(n => n[0]).join('').toUpperCase() }}</div>
+          <div>
+            <div class="contact-title">
+              {{ user.fullName }}
+              <span class="pill {{ user.role === 'admin' ? 'pill-amber' : 'pill-violet' }}">{{ user.role }}</span>
+              <span class="pill {{ user.statutCompte === 'actif' ? 'pill-teal' : 'pill-red' }}">{{ user.statutCompte }}</span>
+            </div>
+            <div class="text-muted">{{ user.email }}</div>
+          </div>
+        </div>
+        <div class="contact-header-actions">
+          <a href="/admin/utilisateurs/{{ user.id }}/edit" class="icon-btn"><i class="ti ti-pencil"></i><span>Modifier</span></a>
+        </div>
+      </div>
+
+      @if(user.role === 'commercial')
+        <div class="stats-grid stats-grid-3">
+          <div class="stat-card">
+            <span class="pill pill-violet">CONTACTS GÉRÉS</span>
+            <div class="value">{{ stats.contactsGeres }}</div>
+          </div>
+          <div class="stat-card">
+            <span class="pill pill-amber">COMMANDES TRAITÉES</span>
+            <div class="value">{{ stats.commandesTraitees }}</div>
+          </div>
+          <div class="stat-card">
+            <span class="pill pill-teal">COMMANDES RÉUSSIES</span>
+            <div class="value">{{ stats.commandesReussies }}</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Historique des actions</h3></div>
+          <table class="contacts-table">
+            <thead><tr><th>Date</th><th>Entreprise</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              @each(h in historique)
+                <tr>
+                  <td>{{ h.dateAction.toFormat('dd/MM/yyyy HH:mm') }}</td>
+                  <td>{{ h.entreprise.nom }}</td>
+                  <td><span class="pill pill-teal">{{ h.typeAction.replace('_', ' ') }}</span></td>
+                  <td class="text-muted">{{ h.description ?? '-' }}</td>
+                </tr>
+              @end
+              @if(historique.length === 0)
+                <tr><td colspan="4" class="text-muted">Aucune activité pour l'instant.</td></tr>
+              @end
+            </tbody>
+          </table>
+        </div>
+      @else
+        <div class="panel">
+          <p class="text-muted">Ce compte est un administrateur — aucune statistique commerciale associée.</p>
+        </div>
+      @end
+
+      <a href="/admin/utilisateurs" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+</body>
+</html>

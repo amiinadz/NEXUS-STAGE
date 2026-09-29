@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>NEXUS CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  @!include('partials/topbar')
+  <div class="layout">
+    @!include('partials/sidebar')
+    <main class="content">
+      <h1>Nouveau contact</h1>
+
+      <div class="panel" style="max-width:600px">
+        <form method="POST" action="/commercial/contacts">
+          {{ csrfField() }}
+
+          <h3 style="margin-bottom:12px">Type de contact</h3>
+          <div class="radio-group">
+            <label><input type="radio" name="type" value="prospect" checked onchange="toggleType()"> Prospect (nouveau)</label>
+            <label><input type="radio" name="type" value="client" onchange="toggleType()"> Client déjà existant</label>
+          </div>
+
+          <h3 style="margin:20px 0 12px">Informations de l'entreprise</h3>
+          <label>Nom de l'entreprise</label>
+          <input type="text" name="nom" required>
+
+          <label>Secteur d'activité</label>
+          <input type="text" name="secteurActivite">
+
+          <label>Adresse</label>
+          <input type="text" name="adresse">
+
+          <label>Téléphone</label>
+          <input type="text" name="telephone">
+
+          <label>Email</label>
+          <input type="email" name="email">
+
+          <div id="prospectBlock">
+            <h3 style="margin:20px 0 12px">Produit potentiellement intéressé</h3>
+            <label>Produit / service</label>
+            <select name="produitInteretId">
+              <option value="">-- Sélectionner --</option>
+              @each(p in produits)
+                <option value="{{ p.id }}">{{ p.nom }}</option>
+              @end
+            </select>
+            <label>Quantité estimée</label>
+            <input type="number" name="quantiteInteret" value="1" min="1">
+            <p class="text-muted" style="margin-top:8px">Une commande sera créée avec le statut <b>En attente</b>.</p>
+          </div>
+
+          <div id="clientBlock" style="display:none">
+  <h3 style="margin:20px 0 12px">Commandes déjà passées</h3>
+  <div id="pastCommandesList">
+    <div class="commande-row">
+      <label>Produit / service</label>
+      <select name="pastProduitId[]">
+        <option value="">-- Sélectionner --</option>
+        @each(p in produits)
+          <option value="{{ p.id }}">{{ p.nom }}</option>
+        @end
+      </select>
+      <label>Quantité</label>
+      <input type="number" name="pastQuantite[]" value="1" min="1">
+      <label>Date de la commande</label>
+      <input type="date" name="pastDate[]">
+      <label>Statut</label>
+      <select name="pastStatut[]">
+        <option value="validee">Validée</option>
+        <option value="terminee">Terminée</option>
+      </select>
+    </div>
+  </div>
+  <button type="button" class="btn-secondary" onclick="addPastCommande()" style="margin-top:8px">+ Ajouter une autre commande</button>
+
+  <h3 style="margin:20px 0 12px">Nouvelle commande (facultatif)</h3>
+  <label><input type="checkbox" name="wantsNewCommande" onchange="toggleNewCommande()"> Le client souhaite passer une nouvelle commande</label>
+  <div id="newCommandeBlock" style="display:none; margin-top:12px">
+    <label>Produit / service</label>
+    <select name="newProduitId">
+      <option value="">-- Sélectionner --</option>
+      @each(p in produits)
+        <option value="{{ p.id }}">{{ p.nom }}</option>
+      @end
+    </select>
+    <label>Quantité</label>
+    <input type="number" name="newQuantite" value="1" min="1">
+    <p class="text-muted" style="margin-top:8px">Cette commande sera créée avec le statut <b>En attente</b>.</p>
+  </div>
+</div>
+          <button type="submit" class="btn-primary" style="margin-top:20px">Créer le contact</button>
+        </form>
+      </div>
+
+      <a href="/commercial/contacts" class="back-link">← Retour à la liste</a>
+    </main>
+  </div>
+
+  <script>
+    function toggleType() {
+      const isClient = document.querySelector('input[name="type"]:checked').value === 'client'
+      document.getElementById('prospectBlock').style.display = isClient ? 'none' : 'block'
+      document.getElementById('clientBlock').style.display = isClient ? 'block' : 'none'
+    }
+    function toggleNewCommande() {
+      const checked = document.querySelector('input[name="wantsNewCommande"]').checked
+      document.getElementById('newCommandeBlock').style.display = checked ? 'block' : 'none'
+    }
+
+    function addPastCommande() {
+  const list = document.getElementById('pastCommandesList')
+  const row = list.children[0].cloneNode(true)
+  row.querySelectorAll('input, select').forEach(el => {
+    if (el.type === 'number') el.value = '1'
+    else el.value = ''
+  })
+  list.appendChild(row)
+}
+  </script>
+</body>
+</html>
